@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 public class ControlsActivity extends AppCompatActivity {
 
-    Button turnOn, turnOff;
     Switch LightOne;
 
     //bluetooth address
@@ -30,10 +27,10 @@ public class ControlsActivity extends AppCompatActivity {
     private ProgressDialog progress;
 
     //bluetooth stuff
-    BluetoothAdapter myBluetooth = null;
-    BluetoothSocket btSocket = null;
-    private boolean isBtConnected = false;
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    BluetoothAdapter BluetoothAdap = null;
+    BluetoothSocket BluetoothSoc = null;
+    private boolean BooleanBT = false;
+    static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 
 
@@ -84,14 +81,14 @@ public class ControlsActivity extends AppCompatActivity {
         {
             try
             {
-                if (btSocket == null || !isBtConnected)
+                if (BluetoothSoc == null || !BooleanBT)
                 {
                     //connecting
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();
-                    BluetoothDevice pairedDevice = myBluetooth.getRemoteDevice(address);
-                    btSocket = pairedDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
+                    BluetoothAdap = BluetoothAdapter.getDefaultAdapter();
+                    BluetoothDevice pairedDevice = BluetoothAdap.getRemoteDevice(address);
+                    BluetoothSoc = pairedDevice.createInsecureRfcommSocketToServiceRecord(uuid);
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    btSocket.connect();
+                    BluetoothSoc.connect();
                 }
             }
             catch (IOException e)
@@ -115,7 +112,7 @@ public class ControlsActivity extends AppCompatActivity {
             {
                 //connection done
                 msg("Connected.");
-                isBtConnected = true;
+                BooleanBT = true;
             }
             progress.dismiss();
         }
@@ -130,11 +127,11 @@ public class ControlsActivity extends AppCompatActivity {
     {
         //send a message to the Arduino
         //when it's time, use this to send the turn on/off message
-        if (btSocket!=null)
+        if (BluetoothSoc!=null)
         {
             try
             {
-                btSocket.getOutputStream().write(msg.getBytes());
+                BluetoothSoc.getOutputStream().write(msg.getBytes());
             }
             catch (IOException e)
             {
