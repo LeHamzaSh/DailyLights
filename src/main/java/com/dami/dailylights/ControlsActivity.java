@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class ControlsActivity extends AppCompatActivity {
 
     Button turnOn, turnOff;
+    Switch LightOne;
 
     //bluetooth address
     String address = null;
@@ -49,19 +52,18 @@ public class ControlsActivity extends AppCompatActivity {
         //start connection
         new ConnectBT().execute();
 
-        turnOn = (Button)findViewById(R.id.turnOn);
-        turnOff = (Button)findViewById(R.id.turnOff);
-
-        turnOn.setOnClickListener(new View.OnClickListener() {
+        LightOne = (Switch) findViewById(R.id.Light1);
+        LightOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                sendMsg("1");
-            }
-        });
-        turnOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMsg("0");
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked == true){
+                    sendMsg("1");
+                    Toast.makeText(getBaseContext(),"Switch is On",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    sendMsg("0");
+                    Toast.makeText(getBaseContext(),"Switch is Off",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
