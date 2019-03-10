@@ -24,6 +24,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ControlsActivity extends AppCompatActivity {
     //Switch Declaration
@@ -49,8 +53,13 @@ public class ControlsActivity extends AppCompatActivity {
     //Map Creation
     Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
 
+    // Automode function boolean
+    AtomicBoolean running = new AtomicBoolean(false);
+
+
     //Store time values
-    String choice;
+    String choice = "USER";
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +75,15 @@ public class ControlsActivity extends AppCompatActivity {
         //start connection
         new ConnectBT().execute();
 
+        //start automode logic;
+        try {
+            AutoMode();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //Timers Declarations
+
+
 
         //Light One Switch Functions
         LightOne = (Switch) findViewById(R.id.Light1);
@@ -81,16 +98,16 @@ public class ControlsActivity extends AppCompatActivity {
                         timeMap.put(time1, true);
                         Log.d("HAMZA_APP","USER MODE ENABLED - Light will Turn ON at: " + time1);
                     }
-
                     sendMsg("1");
                     Toast.makeText(getBaseContext(),"Switch is On",Toast.LENGTH_SHORT).show();
+
                 }
                 else{
 
                     if ( choice.equals("USER") ) {
-                        LocalDateTime time2 = LocalDateTime.now();
-                        timeMap.put(time2, false);
-                        Log.d("HAMZA_APP","USER MODE ENABLED - Light will Turn OFF at: " + time2);
+                        LocalDateTime time1 = LocalDateTime.parse("2019-03-10T19:58:00");
+                        timeMap.put(time1, false);
+                        Log.d("HAMZA_APP","USER MODE ENABLED - Light will Turn OFF at: " + time1);
                     }
 
                     sendMsg("0");
@@ -103,17 +120,28 @@ public class ControlsActivity extends AppCompatActivity {
         //Check Box Functions
         Check = (CheckBox) findViewById(R.id.checkBox);
         Check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked == true){
 
                     choice = "AUTO";
                     Toast.makeText(getBaseContext(),"Auto Mode Enabled",Toast.LENGTH_SHORT).show();
+                        running.getAndSet(true);
+                    try {
+                        AutoMode();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     Log.d("HAMZA_APP","AUTO MODE ENABLED");
                 }
                 else{
 
                     choice = "USER";
+
+                    running.getAndSet(false);
+
+
                     Toast.makeText(getBaseContext(),"User Mode Enabled",Toast.LENGTH_SHORT).show();
                     Log.d("HAMZA_APP","USER MODE ENABLED");
                 }
@@ -122,20 +150,40 @@ public class ControlsActivity extends AppCompatActivity {
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void AutoMode() throws InterruptedException {
-        int hour, minute, second; // variable declaration
-        hour = LocalDateTime.now().getHour(); // get system clock hour
-        minute = LocalDateTime.now().getMinute(); // get system clock minute
-        second = LocalDateTime.now().getSecond(); // get system clock second
 
-        while(choice.equals("AUTO")) {
-            timeMap.forEach((date, booleanState) -> {
-                if (date.getSecond() == second) {
-                    Log.d("HAMZA_APP", "Checking Time Now");
-                    Log.d("HAMZA_APP", "Changing Light State" + booleanState);
+
+        ExecutorService exec = Executors.newSingleThreadExecutor();
+
+        exec.submit(() -> {
+            while(running.get()) {
+                int hour, minute, second; // variable declaration
+                LocalDateTime timeNow = LocalDateTime.now();
+                hour = timeNow.getHour(); // get system clock hour
+                minute = timeNow.getMinute(); // get system clock minute
+                second = timeNow.getSecond(); // get system clock second
+                Log.d("HAMZA_APP", "RUNNING AUTO MODE TIME CHECK at: " + timeNow);
+                Log.d("HAMZA_APP", "Stored TimeMap: " + timeMap);
+                timeMap.forEach((date, booleanState) -> {
+                    if (date.getMinute() == minute) {
+                        Log.d("HAMZA_APP", "Found match in time map, stored time: " + date + ", actual time:  " + timeNow);
+                        if (booleanState == true) {
+                            Log.d("HAMZA_APP", "Changing Light State" + booleanState);
+                            sendMsg("1");
+                        }else{
+                            sendMsg("0");
+                        }
+                    }
+                });
+                try {
+                    Thread.sleep(1 * 60 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
-            Thread.sleep(1 * 60 * 1000);
-        }
+            }
+            Log.d("HAMZA_APP", "AUTO MODE WHILE LOOP EXIT");
+        });
+
+
     }
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>
