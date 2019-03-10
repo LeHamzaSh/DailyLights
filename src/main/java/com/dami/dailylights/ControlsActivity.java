@@ -6,19 +6,31 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ControlsActivity extends AppCompatActivity {
-
+    //Switch Declaration
     Switch LightOne;
+
+    //Check Box Declaration
+    CheckBox Check;
 
     //bluetooth address
     String address = null;
@@ -30,10 +42,15 @@ public class ControlsActivity extends AppCompatActivity {
     BluetoothAdapter BluetoothAdap = null;
     BluetoothSocket BluetoothSoc = null;
     private boolean BooleanBT = false;
+
+    //UUID stuff
     static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    //Map Creation
+    Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
 
-
+    //Store time values
+    String choice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,26 +60,70 @@ public class ControlsActivity extends AppCompatActivity {
         Intent newint = getIntent();
         setContentView(R.layout.activity_controls);
 
-        //get address from previous choise
+        //get address from previous choice
         address = newint.getStringExtra(MainActivity.EXTRA_ADDRESS);
 
         //start connection
         new ConnectBT().execute();
 
+        //Timers Declarations
+
+        //Light One Switch Functions
         LightOne = (Switch) findViewById(R.id.Light1);
         LightOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked == true){
+
+                    if ( choice.equals("USER") ) {
+                        LocalDateTime time1 = LocalDateTime.now();
+                        timeMap.put(time1, true);
+                        Log.d("HAMZA_APP","USER MODE ENABLED - Light will Turn ON at: " + time1);
+                    }
+
                     sendMsg("1");
                     Toast.makeText(getBaseContext(),"Switch is On",Toast.LENGTH_SHORT).show();
                 }
                 else{
+
+                    if ( choice.equals("USER") ) {
+                        LocalDateTime time2 = LocalDateTime.now();
+                        timeMap.put(time2, false);
+                        Log.d("HAMZA_APP","USER MODE ENABLED - Light will Turn OFF at: " + time2);
+                    }
+
                     sendMsg("0");
                     Toast.makeText(getBaseContext(),"Switch is Off",Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
+
+        //Check Box Functions
+        Check = (CheckBox) findViewById(R.id.checkBox);
+        Check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked == true){
+
+                    choice = "AUTO";
+                    Toast.makeText(getBaseContext(),"Auto Mode Enabled",Toast.LENGTH_SHORT).show();
+                    Log.d("HAMZA_APP","AUTO MODE ENABLED");
+                }
+                else{
+                    choice = "USER";
+                    Toast.makeText(getBaseContext(),"User Mode Enabled",Toast.LENGTH_SHORT).show();
+                    Log.d("HAMZA_APP","USER MODE ENABLED");
+                }
+            }
+        });
+    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void Algorithm() throws InterruptedException{
+        Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
+        LocalDateTime Time1 = LocalDateTime.now();
+        LocalDateTime Time2 = LocalDateTime.of(2019,03,10, 13,02);
     }
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>
