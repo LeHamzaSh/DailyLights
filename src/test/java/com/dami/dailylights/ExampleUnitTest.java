@@ -36,6 +36,7 @@ public class ExampleUnitTest {
         // compare if they are equal, then send command
 
         LocalDateTime runningTime = LocalDateTime.now().plusMinutes(3);
+
         while (true) {
 
             System.out.println("Checking Time Now: " + LocalDateTime.now());

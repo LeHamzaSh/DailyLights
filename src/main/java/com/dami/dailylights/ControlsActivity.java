@@ -112,6 +112,7 @@ public class ControlsActivity extends AppCompatActivity {
                     Log.d("HAMZA_APP","AUTO MODE ENABLED");
                 }
                 else{
+
                     choice = "USER";
                     Toast.makeText(getBaseContext(),"User Mode Enabled",Toast.LENGTH_SHORT).show();
                     Log.d("HAMZA_APP","USER MODE ENABLED");
@@ -120,10 +121,21 @@ public class ControlsActivity extends AppCompatActivity {
         });
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void Algorithm() throws InterruptedException{
-        Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
-        LocalDateTime Time1 = LocalDateTime.now();
-        LocalDateTime Time2 = LocalDateTime.of(2019,03,10, 13,02);
+    private void AutoMode() throws InterruptedException {
+        int hour, minute, second; // variable declaration
+        hour = LocalDateTime.now().getHour(); // get system clock hour
+        minute = LocalDateTime.now().getMinute(); // get system clock minute
+        second = LocalDateTime.now().getSecond(); // get system clock second
+
+        while(choice.equals("AUTO")) {
+            timeMap.forEach((date, booleanState) -> {
+                if (date.getSecond() == second) {
+                    Log.d("HAMZA_APP", "Checking Time Now");
+                    Log.d("HAMZA_APP", "Changing Light State" + booleanState);
+                }
+            });
+            Thread.sleep(1 * 60 * 1000);
+        }
     }
 
     private class ConnectBT extends AsyncTask<Void, Void, Void>
