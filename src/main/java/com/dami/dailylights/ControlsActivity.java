@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,14 @@ public class ControlsActivity extends AppCompatActivity {
 
     //Map Creation
     Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
+
+    Map<LocalDateTime, Timestamp> Day1 = new HashMap<>();
+    Map<LocalDateTime, Timestamp> Day2 = new HashMap<>();
+    Map<LocalDateTime, Timestamp> Day3 = new HashMap<>();
+
+    Map<LocalDateTime, Timestamp> Result1 = new HashMap<>();
+    Map<LocalDateTime, Timestamp> Result2 = new HashMap<>();
+    Map<LocalDateTime, Timestamp> Result3 = new HashMap<>();
 
     // Automode function boolean
     AtomicBoolean isAutoModeEnabled = new AtomicBoolean(false);
