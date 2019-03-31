@@ -20,9 +20,7 @@ public class TimeStampLogic {
             LocalDateTime maxDay1 = Collections.max(day1.keySet());
             LocalDateTime minDay1 = Collections.min(day1.keySet());
 
-            if(day2.size() > day3.size()){
-
-            }
+            updateResultComparingMinAndMax(day2, day3, Result, maxDay1, minDay1);
         }
 
         /* CONDITIONS FOR DAY 2 */
@@ -31,42 +29,49 @@ public class TimeStampLogic {
             LocalDateTime maxDay2 = Collections.max(day2.keySet());
             LocalDateTime minDay2 = Collections.min(day2.keySet());
 
-            //if day1 is greater than day 3
-            if (day1.size() > day3.size()){
-                LocalDateTime maxDay1 = Collections.max(day1.keySet());
-                LocalDateTime minDay1 = Collections.min(day1.keySet());
+            updateResultComparingMinAndMax(day1, day3, Result, maxDay2, minDay2);
 
-                //if max time day 1 is greater than max time day 2
-                if(maxDay1.isAfter(maxDay2)){
-                    Result.put(maxDay1,false);
-                }
-
-                //if max time day 2 is greater than max time day 1
-                else{
-                    Result.put(maxDay2,false);
-                }
-
-                if(minDay1.isBefore(minDay2)){
-                    Result.put(minDay1,true);
-                }
-                else{
-                    Result.put(minDay2,true);
-                }
-             //if day 3 is greater than day 2
-            } else {
-                LocalDateTime maxDay3 = Collections.max(day3.keySet());
-                LocalDateTime minDay3 = Collections.min(day3.keySet());
-
-            }
         }
         /*CONDITIONS FOR DAY 3 */
         else if((day3.size() > day1.size()) && (day3.size() > day2.size())){
             LocalDateTime maxDay3 = Collections.max(day3.keySet());
             LocalDateTime minDay3 = Collections.min(day3.keySet());
-            Result.put(maxDay3,true);
-            Result.put(minDay3,true);
+
+            updateResultComparingMinAndMax(day1, day2, Result, maxDay3, minDay3);
+
         }
 
         return Result;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void updateResultComparingMinAndMax(Map<LocalDateTime, Boolean> dayA, Map<LocalDateTime, Boolean> dayB, Map<LocalDateTime, Boolean> result, LocalDateTime maxDay2, LocalDateTime minDay2) {
+        //if day1 is greater than day 3
+        if (dayA.size() > dayB.size()){
+            LocalDateTime maxDay1 = Collections.max(dayA.keySet());
+            LocalDateTime minDay1 = Collections.min(dayA.keySet());
+
+            //if max time day 1 is greater than max time day 2
+            if(maxDay1.isAfter(maxDay2)){
+                result.put(maxDay1,false);
+            }
+
+            //if max time day 2 is greater than max time day 1
+            else{
+                result.put(maxDay2,false);
+            }
+
+            if(minDay1.isBefore(minDay2)){
+                result.put(minDay1,true);
+            }
+            else{
+                result.put(minDay2,true);
+            }
+         //if day 3 is greater than day 2
+        } else {
+            LocalDateTime maxDay3 = Collections.max(dayB.keySet());
+            LocalDateTime minDay3 = Collections.min(dayB.keySet());
+
+        }
     }
 }
