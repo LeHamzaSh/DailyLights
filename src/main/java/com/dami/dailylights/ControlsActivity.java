@@ -51,9 +51,7 @@ public class ControlsActivity extends AppCompatActivity {
     //Map Creation
     Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
 
-    Map<LocalDateTime, Boolean> Day1 = new HashMap<>();
-    Map<LocalDateTime, Boolean> Day2 = new HashMap<>();
-    Map<LocalDateTime, Boolean> Day3 = new HashMap<>();
+    Map<LocalDateTime, Boolean> StoredTimeValues = new HashMap<>();
 
     // Automode function boolean
     AtomicBoolean isAutoModeEnabled = new AtomicBoolean(false);
@@ -154,6 +152,7 @@ public class ControlsActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void printUSSensorVlalues() {
         try {
             InputStream is = readUSValue();
@@ -162,10 +161,33 @@ public class ControlsActivity extends AppCompatActivity {
                     Log.d("HAMZA_APP", "Ultrasound Sensor Not Returning Data, BT input stream null");
                 }
 
+                int counter = 0;
                 int readValue = 0;
                 while (readValue != -1 && isUltraSoundSensorModeEnabled.get()) {
                     Log.d("HAMZA_APP", "Read US Value: " + readValue);
                     readValue = is.read();
+                    counter++;
+                    if (counter < 60) {
+                        // day1
+                        Log.d("HAMZA_APP", "DAY1: " + counter);
+
+                    }
+                    if (counter >= 60 && counter < 120) {
+                        // day2
+                        Log.d("HAMZA_APP", "DAY2: " + counter);
+                    }
+                    if (counter >= 120 && counter < 180) {
+                        // day3
+                        Log.d("HAMZA_APP", "DAY3: " + counter);
+                    }
+                    if(readValue <= 20) {
+                        StoredTimeValues.put(LocalDateTime.now(), true);
+                        Log.d("HAMZA APP", "Stored Time Value: " + StoredTimeValues);
+                    }
+
+                    if (counter >= 180){
+                        counter = 0;
+                    }
                 }
 
             } finally {
@@ -180,6 +202,7 @@ public class ControlsActivity extends AppCompatActivity {
         ExecutorService exec = Executors.newFixedThreadPool(1);
 
         exec.submit(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
                 printUSSensorVlalues();
