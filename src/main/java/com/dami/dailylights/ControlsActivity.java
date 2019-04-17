@@ -236,19 +236,12 @@ public class ControlsActivity extends AppCompatActivity {
         }
             Day1.size();
             int length = Day1Array.length;
-//        for(Boolean value: Day1.values()){
-//            System.out.println("Value = " + Day1.values());
-//        }
 
             for (Integer key2 : Day2.keySet()) {
                 Log.d("HAMZA_APP", " Day2 - Key = " + key2 + ", State: " + Day2.get(key2));
             }
             Day2.size();
             int length2 = Day2Array.length;
-
-//        for(Boolean value2: Day2.values()){
-//            System.out.println("Value2 = " + Day2.values());
-//        }
 
             for (Integer key3 : Day3.keySet()) {
                 Log.d("HAMZA_APP", " Day3 - Key = " + key3 + ", State: " + Day3.get(key3));
@@ -259,39 +252,92 @@ public class ControlsActivity extends AppCompatActivity {
 
             if(length > length2 && length > length3){
                 Log.d("HAMZA_APP","DAY 1 is the highest");
-               // int time1 = Arrays.stream(Day1Array).max().getAsInt();
+                int HT1 = Arrays.stream(Day1Array).max().getAsInt();
+                Log.d("HAMZA_APP","Value: " + HT1);
+
+                //Min Value
+                int LT1 = Arrays.stream(Day1Array).min().getAsInt();
+                Log.d("HAMZA_APP","Min Value: " + LT1);
+
                 if(length2 > length3){
                     Log.d("HAMZA_APP","DAY 2 is the 2nd highest");
+                    int SH2 = Arrays.stream(Day2Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH2);
 
-
+                    //Min Value
+                    int SL2 = Arrays.stream(Day2Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL2);
                 }
+
                 else{
                     Log.d("HAMZA_APP","DAY 3 is the 2nd highest");
+                    int SH3 = Arrays.stream(Day3Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH3);
+
+                    //Min Value
+                    int SL3 = Arrays.stream(Day3Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL3);
                 }
             }
+
             else if(length2 > length && length2 > length3){
                 Log.d("HAMZA_APP","DAY 2 is the highest");
+                int HT2 = Arrays.stream(Day2Array).max().getAsInt();
+                Log.d("HAMZA_APP","Value: " + HT2);
+
+                //Min Value
+                int LT2 = Arrays.stream(Day2Array).min().getAsInt();
+                Log.d("HAMZA_APP","Min Value: " + LT2);
 
                 if(length > length3){
                     Log.d("HAMZA_APP","DAY 1 is the 2nd highest");
+                    int SH1 = Arrays.stream(Day1Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH1);
+
+                    //Min Value
+                    int SL1 = Arrays.stream(Day1Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL1);
                 }
 
                 else{
                     Log.d("HAMZA_APP","DAY 3 is the 2nd highest");
+                    int SH3 = Arrays.stream(Day3Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH3);
+
+                    //Min Value
+                    int SL3 = Arrays.stream(Day3Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL3);
                 }
             }
             else{
                 Log.d("HAMZA_APP","Day 3 is the highest");
+                int HT3 = Arrays.stream(Day3Array).max().getAsInt();
+                Log.d("HAMZA_APP","Value: " + HT3);
+
+                //Min Value
+                int LT3 = Arrays.stream(Day3Array).min().getAsInt();
+                Log.d("HAMZA_APP","Min Value: " + LT3);
 
                 if(length > length2){
                     Log.d("HAMZA_APP","DAY 1 is the 2nd highest");
+                    int SH1 = Arrays.stream(Day1Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH1);
+
+                    //Min Value
+                    int SL1 = Arrays.stream(Day1Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL1);
                 }
 
                 else{
                     Log.d("HAMZA_APP","DAY 2 is the 2nd highest");
+                    int SH2 = Arrays.stream(Day2Array).max().getAsInt();
+                    Log.d("HAMZA_APP","2nd Value: " + SH2);
+
+                    //Min Value
+                    int SL2 = Arrays.stream(Day2Array).min().getAsInt();
+                    Log.d("HAMZA_APP","2nd Min Value: " + SL2);
                 }
             }
-
             return 0;
         }
 
@@ -344,8 +390,6 @@ public class ControlsActivity extends AppCompatActivity {
                     Log.d("HAMZA_APP", "AUTO MODE WHILE LOOP EXIT");
                 }
             });
-
-
         }
 
         private class ConnectBT extends AsyncTask<Void, Void, Void> {
@@ -430,8 +474,6 @@ public class ControlsActivity extends AppCompatActivity {
             sendMsg("0");
         }
 
-
-
     private int[] convertMapIntegerKeyToArray(Map<Integer, Boolean> day1) {
         int[] result = new int[day1.size()];
 
@@ -443,5 +485,4 @@ public class ControlsActivity extends AppCompatActivity {
         }
         return result;
     }
-
 }
