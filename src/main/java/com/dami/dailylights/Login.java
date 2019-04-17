@@ -30,13 +30,15 @@ public class Login extends AppCompatActivity {
 
     //Login Screen Authentication
     private void Authentication(String UserName, String PassWord){
-        if((UserName.equals("Admin")) && (PassWord.equals("Hamza123"))){
-            Intent intent = new Intent(Login.this, MainActivity.class);
-            Login.this.startActivity(intent);
-        }
-        else{
-            Toast.makeText(getBaseContext(), "Enter Password Again!", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(Login.this, MainActivity.class);
+        Login.this.startActivity(intent);
+//        if((UserName.equals("a")) && (PassWord.equals("a"))){
+//            Intent intent = new Intent(Login.this, MainActivity.class);
+//            Login.this.startActivity(intent);
+//        }
+//        else{
+//            Toast.makeText(getBaseContext(), "Enter Password Again!", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 }
