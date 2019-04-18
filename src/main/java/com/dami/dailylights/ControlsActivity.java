@@ -210,12 +210,16 @@ public class ControlsActivity extends AppCompatActivity {
 
                     if (counter >= 180) {
                         // day1, day2, day3
-                        int highestTime = FindHighestTimeFrom3Days(Day1, Day2, Day3);
+                        //int highestTime = FindHighestTimeFrom3Days(Day1, Day2, Day3);
+                        TimeStampLogic timeStampLogic = new TimeStampLogic();
+                        Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(Day1, Day2, Day3);
                         counter = 0; //reset counter back to zero
                         Day1.clear();// Clear Day 1 hash map
                         Day2.clear();// Clear Day 2 hash map
                         Day3.clear();// Clear Day 3 hash map
                         timeMap.clear();
+                        timeMap.putAll(NewProcessedTime);
+                        Log.d("HAMZA_APP","Processed Time: " +timeMap);
                     }
                 }
 
@@ -227,141 +231,6 @@ public class ControlsActivity extends AppCompatActivity {
         }
     }
 
-    private int FindHighestTimeFrom3Days(Map<Integer, Boolean> Day1, Map<Integer, Boolean> Day2, Map<Integer, Boolean> Day3) {
-        int[] Day1Array = convertMapIntegerKeyToArray(Day1);
-        int[] Day2Array = convertMapIntegerKeyToArray(Day2);
-        int[] Day3Array = convertMapIntegerKeyToArray(Day3);
-
-        for (Integer key : Day1.keySet()) {
-            Log.d("HAMZA_APP", " Day1 - Key = " + key + ", State: " + Day1.get(key));
-        }
-            Day1.size();
-            int length = Day1Array.length;
-
-            for (Integer key2 : Day2.keySet()) {
-                Log.d("HAMZA_APP", " Day2 - Key = " + key2 + ", State: " + Day2.get(key2));
-            }
-            Day2.size();
-            int length2 = Day2Array.length;
-
-            for (Integer key3 : Day3.keySet()) {
-                Log.d("HAMZA_APP", " Day3 - Key = " + key3 + ", State: " + Day3.get(key3));
-            }
-            Day3.size();
-
-            int length3 = Day3Array.length;
-
-        if(length == 0 && length2 == 0 && length3 == 0){
-            timeMap.put(0, false);
-        }
-
-        else {
-            if (length > length2 && length > length3) {
-                Log.d("HAMZA_APP", "DAY 1 is the highest");
-                int HT1 = Arrays.stream(Day1Array).max().getAsInt();
-                Log.d("HAMZA_APP", "Value: " + HT1);
-
-                if (length2 > length3) {
-                    Log.d("HAMZA_APP", "DAY 2 is the 2nd highest");
-                    int SH2 = Arrays.stream(Day2Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH2);
-
-                    if (HT1 > SH2) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT1);
-                        timeMap.put(HT1, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH2);
-                        timeMap.put(SH2, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                } else {
-                    Log.d("HAMZA_APP", "DAY 3 is the 2nd highest");
-                    int SH3 = Arrays.stream(Day3Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH3);
-
-                    if (HT1 > SH3) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT1);
-                        timeMap.put(HT1, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH3);
-                        timeMap.put(SH3, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                }
-            } else if (length2 > length && length2 > length3) {
-                Log.d("HAMZA_APP", "DAY 2 is the highest");
-                int HT2 = Arrays.stream(Day2Array).max().getAsInt();
-                Log.d("HAMZA_APP", "Value: " + HT2);
-
-                if (length > length3) {
-                    Log.d("HAMZA_APP", "DAY 1 is the 2nd highest");
-                    int SH1 = Arrays.stream(Day1Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH1);
-
-                    if (HT2 > SH1) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT2);
-                        timeMap.put(HT2, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH1);
-                        timeMap.put(SH1, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                } else {
-                    Log.d("HAMZA_APP", "DAY 3 is the 2nd highest");
-                    int SH3 = Arrays.stream(Day3Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH3);
-
-                    if (HT2 > SH3) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT2);
-                        timeMap.put(HT2, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH3);
-                        timeMap.put(SH3, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                }
-            } else {
-                Log.d("HAMZA_APP", "Day 3 is the highest");
-                int HT3 = Arrays.stream(Day3Array).max().getAsInt();
-                Log.d("HAMZA_APP", "Value: " + HT3);
-
-                if (length > length2) {
-                    Log.d("HAMZA_APP", "DAY 1 is the 2nd highest");
-                    int SH1 = Arrays.stream(Day1Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH1);
-
-                    if (HT3 > SH1) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT3);
-                        timeMap.put(HT3, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH1);
-                        timeMap.put(SH1, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                } else {
-                    Log.d("HAMZA_APP", "DAY 2 is the 2nd highest");
-                    int SH2 = Arrays.stream(Day2Array).max().getAsInt();
-                    Log.d("HAMZA_APP", "2nd Value: " + SH2);
-
-                    if (HT3 > SH2) {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + HT3);
-                        timeMap.put(HT3, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    } else {
-                        Log.d("HAMZA_APP", "Final Highest Value: " + SH2);
-                        timeMap.put(SH2, true);
-                        Log.d("HAMZA_APP", "Stored TimeMap Value: " + timeMap);
-                    }
-                }
-            }
-        }
-            return 0;
-        }
 
         private void UltraSoundMode () {
             ExecutorService exec = Executors.newFixedThreadPool(1);
