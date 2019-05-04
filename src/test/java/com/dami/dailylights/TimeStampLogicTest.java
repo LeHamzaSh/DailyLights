@@ -3,6 +3,7 @@ package com.dami.dailylights;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class TimeStampLogicTest {
         ExpectedResult.put(Highest, false);
         ExpectedResult.put(Lowest, true);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day1, Day2, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
 
@@ -76,7 +77,7 @@ public class TimeStampLogicTest {
 
         ExpectedResult.put(0, false);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day1, Day2, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
     }
@@ -96,7 +97,7 @@ public class TimeStampLogicTest {
 
         ExpectedResult.put(0, false);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day2, Day1, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
     }
@@ -116,7 +117,7 @@ public class TimeStampLogicTest {
 
         ExpectedResult.put(0, false);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day3, Day1, Day2);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
     }
@@ -132,7 +133,7 @@ public class TimeStampLogicTest {
 
         ExpectedResult.put(0, false);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day1, Day2, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
 
@@ -183,7 +184,7 @@ public class TimeStampLogicTest {
         ExpectedResult.put(Highest, false);
         ExpectedResult.put(Lowest, true);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day2, Day1, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
 
@@ -226,7 +227,7 @@ public class TimeStampLogicTest {
         ExpectedResult.put(Highest, false);
         ExpectedResult.put(Lowest, true);
 
-        Map<Integer, Boolean> actualresult = logic.dataProcess(Day2, Day1, Day3);
+        Map<Integer, Boolean> actualresult = logic.dataProcess(Arrays.asList(Day1, Day2, Day3));
 
         assertEquals(ExpectedResult, actualresult);
 

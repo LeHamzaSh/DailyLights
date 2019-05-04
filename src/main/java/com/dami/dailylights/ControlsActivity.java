@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -175,49 +177,63 @@ public class ControlsActivity extends AppCompatActivity {
                 Day2.clear(); // clear day 2 hash map
                 Day3.clear(); // clear day 3 hash map
 
+                DaysCreator creator = new DaysCreator();
+
+                List<Map<Integer, Boolean>> generatedDays = creator.createDays(7);
+                List<Integer> events = new ArrayList<>();
+
                 while (readValue != -1 && isUltraSoundSensorModeEnabled.get()) {
                     //Log.d("HAMZA_APP", "Read US Value: " + readValue);
                     readValue = is.read();
                     counter++;
+                    events.add(readValue);
+                    Log.d("HAMZA_APP", "Counter Value: " + counter + " , Local Time In Seconds: " + LocalDateTime.now().getSecond() +" Sensor Value: "+readValue);
 
-                    // Day 1 Conditions
-                    if (counter < 60) {
-                        Log.d("HAMZA_APP", "Counter Value Day 1: " + counter);
-                        if (readValue <= 20) {
-                            Day1.put(LocalDateTime.now().getSecond(), true);
-                            Log.d("HAMZA_APP", "Boolean True Time: " + Day1);
-                        }
-                    }
+//                    // Day 1 Conditions
+//                    if (counter < 60) {
+//                        Log.d("HAMZA_APP", "Counter Value Day 1: " + counter);
+//                        if (readValue <= 20) {
+//                            Day1.put(LocalDateTime.now().getSecond(), true);
+//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day1);
+//                        }
+//                    }
+//
+//                    // Day 2 Conditions
+//                    if (counter >= 60 && counter < 120) {
+//                        Log.d("HAMZA_APP", "Counter Value Day 2: " + counter);
+//                        if (readValue <= 20) {
+//                            Day2.put(LocalDateTime.now().getSecond(), true);
+//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day2);
+//                        }
+//                    }
+//
+//                    // Day 3 Conditions
+//                    if (counter >= 120 && counter < 180) {
+//                        Log.d("HAMZA_APP", "Counter Value Day 3: " + counter);
+//                        if (readValue <= 20) {
+//                            Day3.put(LocalDateTime.now().getSecond(), true);
+//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day3);
+//                        }
+//                    }
 
-                    // Day 2 Conditions
-                    if (counter >= 60 && counter < 120) {
-                        Log.d("HAMZA_APP", "Counter Value Day 2: " + counter);
-                        if (readValue <= 20) {
-                            Day2.put(LocalDateTime.now().getSecond(), true);
-                            Log.d("HAMZA_APP", "Boolean True Time: " + Day2);
-                        }
-                    }
-
-                    // Day 3 Conditions
-                    if (counter >= 120 && counter < 180) {
-                        Log.d("HAMZA_APP", "Counter Value Day 3: " + counter);
-                        if (readValue <= 20) {
-                            Day3.put(LocalDateTime.now().getSecond(), true);
-                            Log.d("HAMZA_APP", "Boolean True Time: " + Day3);
-                        }
-                    }
-
-                    if (counter >= 180) {
+                    int eventsSample = 210;
+                    if (counter >= eventsSample) {
                         // day1, day2, day3
                         //int highestTime = FindHighestTimeFrom3Days(Day1, Day2, Day3);
+                        creator.distributeEvents(generatedDays,30, events );
                         TimeStampLogic timeStampLogic = new TimeStampLogic();
-                        Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(Day1, Day2, Day3);
+                        //Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(Arrays.asList(Day1, Day2, Day3));
+                        Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(generatedDays);
                         counter = 0; //reset counter back to zero
+
+
                         Day1.clear();// Clear Day 1 hash map
                         Day2.clear();// Clear Day 2 hash map
                         Day3.clear();// Clear Day 3 hash map
+                        creator.clearDays(generatedDays);
                         timeMap.clear();
                         timeMap.putAll(NewProcessedTime);
+                        events.clear();
                         Log.d("HAMZA_APP","Processed Time: " +timeMap);
                     }
                 }
@@ -230,132 +246,132 @@ public class ControlsActivity extends AppCompatActivity {
         }
     }
 
-        private void UltraSoundMode () {
-            ExecutorService exec = Executors.newFixedThreadPool(1);
+    private void UltraSoundMode () {
+        ExecutorService exec = Executors.newFixedThreadPool(1);
 
-            exec.submit(new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void run() {
-                    printUSSensorVlalues();
-                }
-            });
-        }
+        exec.submit(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void run() {
+                printUSSensorVlalues();
+            }
+        });
+    }
 
-        private void AutoMode () throws InterruptedException {
+    private void AutoMode () throws InterruptedException {
 
-            ExecutorService exec = Executors.newSingleThreadExecutor();
+        ExecutorService exec = Executors.newSingleThreadExecutor();
 
-            exec.submit(new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void run() {
-                    while (isAutoModeEnabled.get()) {
-                        int second; // variable declaration
-                        LocalDateTime timeNow = LocalDateTime.now();
-                        second = timeNow.getSecond(); // get system clock second
-                        //Log.d("HAMZA_APP", "RUNNING AUTO MODE TIME CHECK at: " + timeNow);
-                        //Log.d("HAMZA_APP", "Stored TimeMap: " + timeMap);
-                        timeMap.forEach((date, booleanState) -> {
-                            if (date.equals(second)) {
-                                Log.d("HAMZA_APP", "Found match in time map, stored time: " + date + ", actual time:  " + timeNow);
-                                if (booleanState == true) {
-                                    Log.d("HAMZA_APP", "Changing Light State" + booleanState);
-                                    ControlsActivity.this.sendMsg("1");
-                                } else {
-                                    ControlsActivity.this.sendMsg("0");
-                                }
+        exec.submit(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void run() {
+                while (isAutoModeEnabled.get()) {
+                    int second; // variable declaration
+                    LocalDateTime timeNow = LocalDateTime.now();
+                    second = timeNow.getSecond(); // get system clock second
+                    //Log.d("HAMZA_APP", "RUNNING AUTO MODE TIME CHECK at: " + timeNow);
+                    //Log.d("HAMZA_APP", "Stored TimeMap: " + timeMap);
+                    timeMap.forEach((date, booleanState) -> {
+                        if (date.equals(second)) {
+                            Log.d("HAMZA_APP", "Found match in time map, stored time: " + date + ", actual time:  " + timeNow);
+                            if (booleanState == true) {
+                                Log.d("HAMZA_APP", "Changing Light State" + booleanState);
+                                ControlsActivity.this.sendMsg("1");
+                            } else {
+                                ControlsActivity.this.sendMsg("0");
                             }
-                        });
-                        try {
-                            Thread.sleep(1 * 1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
+                    });
+                    try {
+                        Thread.sleep(1 * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    Log.d("HAMZA_APP", "AUTO MODE WHILE LOOP EXIT");
                 }
-            });
+                Log.d("HAMZA_APP", "AUTO MODE WHILE LOOP EXIT");
+            }
+        });
+    }
+
+    private class ConnectBT extends AsyncTask<Void, Void, Void> {
+        private boolean ConnectSuccessfull = true;
+
+        @Override
+        protected void onPreExecute() {
+            //showing progress dialog
+            progress = ProgressDialog.show(ControlsActivity.this, "Disassembling your CPU...", "Joking, just connecting...");
         }
 
-        private class ConnectBT extends AsyncTask<Void, Void, Void> {
-            private boolean ConnectSuccessfull = true;
-
-            @Override
-            protected void onPreExecute() {
-                //showing progress dialog
-                progress = ProgressDialog.show(ControlsActivity.this, "Disassembling your CPU...", "Joking, just connecting...");
-            }
-
-            @Override
-            protected Void doInBackground(Void... devices) {
-                try {
-                    if (BluetoothSoc == null || !BooleanBT) {
-                        //connecting
-                        BluetoothAdap = BluetoothAdapter.getDefaultAdapter();
-                        BluetoothDevice pairedDevice = BluetoothAdap.getRemoteDevice(address);
-                        BluetoothSoc = pairedDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-                        BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                        BluetoothSoc.connect();
-                    }
-                } catch (IOException e) {
-                    //error
-                    ConnectSuccessfull = false;
+        @Override
+        protected Void doInBackground(Void... devices) {
+            try {
+                if (BluetoothSoc == null || !BooleanBT) {
+                    //connecting
+                    BluetoothAdap = BluetoothAdapter.getDefaultAdapter();
+                    BluetoothDevice pairedDevice = BluetoothAdap.getRemoteDevice(address);
+                    BluetoothSoc = pairedDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                    BluetoothSoc.connect();
                 }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                super.onPostExecute(result);
-
-                if (!ConnectSuccessfull) {
-                    msg("Connection Failed.Try again.");
-                    finish();
-                } else {
-                    //connection done
-                    msg("Connected.");
-                    BooleanBT = true;
-                }
-                progress.dismiss();
-            }
-        }
-
-        private void msg (String s){
-            //create a toast - shortcut
-            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
-        }
-
-        private void sendMsg (String msg)
-        {
-            //send a message to the Arduino
-            //when it's time, use this to send the turn on/off message
-            if (BluetoothSoc != null) {
-                try {
-                    BluetoothSoc.getOutputStream().write(msg.getBytes());
-                } catch (IOException e) {
-                    msg("Error");
-                }
-            }
-        }
-
-        private InputStream readUSValue ()
-        {
-            //Receive data from the arduino
-            if (BluetoothSoc != null) {
-                try {
-                    return BluetoothSoc.getInputStream();
-                } catch (IOException e) {
-                    msg("Error");
-                    Log.d("HAMZA_APP", "Error while reading UltraSound Sensor value: \n" + e);
-                }
+            } catch (IOException e) {
+                //error
+                ConnectSuccessfull = false;
             }
             return null;
         }
 
         @Override
-        protected void onDestroy () {
-            super.onDestroy();
-            sendMsg("0");
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            if (!ConnectSuccessfull) {
+                msg("Connection Failed.Try again.");
+                finish();
+            } else {
+                //connection done
+                msg("Connected.");
+                BooleanBT = true;
+            }
+            progress.dismiss();
         }
+    }
+
+    private void msg (String s){
+        //create a toast - shortcut
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+    }
+
+    private void sendMsg (String msg)
+    {
+        //send a message to the Arduino
+        //when it's time, use this to send the turn on/off message
+        if (BluetoothSoc != null) {
+            try {
+                BluetoothSoc.getOutputStream().write(msg.getBytes());
+            } catch (IOException e) {
+                msg("Error");
+            }
+        }
+    }
+
+    private InputStream readUSValue ()
+    {
+        //Receive data from the arduino
+        if (BluetoothSoc != null) {
+            try {
+                return BluetoothSoc.getInputStream();
+            } catch (IOException e) {
+                msg("Error");
+                Log.d("HAMZA_APP", "Error while reading UltraSound Sensor value: \n" + e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        sendMsg("0");
+    }
 }

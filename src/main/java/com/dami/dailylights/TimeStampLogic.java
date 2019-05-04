@@ -4,60 +4,70 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class TimeStampLogic {
+public class  TimeStampLogic {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Map<Integer, Boolean> dataProcess(Map<Integer, Boolean> day1, Map<Integer, Boolean> day2, Map<Integer, Boolean> day3){
+    public Map<Integer, Boolean> dataProcess(List<Map<Integer, Boolean>> days){
+
 
         Map<Integer, Boolean> Result = new HashMap<>();
 
+
         /* IF ALL DAYS ARE EMPTY THEN RETURN RESULT WITH ZERO */
-        if (day1.isEmpty() && day2.isEmpty() && day3.isEmpty()){
+        if (days.size() == 0 || howManyDaysHaveValues(days) == 0) {
             return getDefaultResult(Result);
         }
 
         /* IF VALUE FOR ONE DAY ONLY */
-        if (day1.isEmpty() && day2.isEmpty() || day2.isEmpty() && day3.isEmpty() || day1.isEmpty() && day3.isEmpty()) {
+        if (howManyDaysHaveValues(days) == 1 ) {
             return getDefaultResult(Result);
         }
 
-        /*CONDITIONS FOR DAY 1*/
-        if((day1.size() > day2.size()) && (day1.size() > day3.size())){
-            Integer maxDay1 = Collections.max(day1.keySet());
-            Log.d("HAMZA_APP","Max Value: "+maxDay1);
-            Integer minDay1 = Collections.min(day1.keySet());
-            Log.d("HAMZA_APP","Min Value: "+minDay1);
+        List<Map<Integer, Boolean>> threeHighestDays = chooseThreeHighestDays(days);
 
-            updateResultComparingMinAndMax(day2, day3, Result, maxDay1, minDay1);
-        }
+        Integer highestDayMax = Collections.max(threeHighestDays.get(0).keySet());
+        Integer highestDayMin = Collections.min(threeHighestDays.get(0).keySet());
+        Log.d("HAMZA_APP", "Highest Day Max: " + highestDayMax);
+        Log.d("HAMZA_APP", "Highest Day Min: " + highestDayMin);
 
-        /* CONDITIONS FOR DAY 2 */
-        //if day 2 is greater than day 1 and day 3
-        else if((day2.size() > day1.size()) && (day2.size() > day3.size())){
-            Integer maxDay2 = Collections.max(day2.keySet());
-            Log.d("HAMZA_APP","Max Value: "+maxDay2);
-            Integer minDay2 = Collections.min(day2.keySet());
-            Log.d("HAMZA_APP","Min Value: "+minDay2);
-
-            updateResultComparingMinAndMax(day1, day3, Result, maxDay2, minDay2);
-
-        }
-        /*CONDITIONS FOR DAY 3 */
-        else {
-            Integer maxDay3 = Collections.max(day3.keySet());
-            Log.d("HAMZA_APP","Max Value: "+maxDay3);
-            Integer minDay3 = Collections.min(day3.keySet());
-            Log.d("HAMZA_APP","Min Value: "+minDay3);
-
-            updateResultComparingMinAndMax(day1, day2, Result, maxDay3, minDay3);
-
-        }
+        updateResultComparingMinAndMax(threeHighestDays.get(1), threeHighestDays.get(2), Result, highestDayMax, highestDayMin);
 
         return Result;
+
+    }
+
+    private int howManyDaysHaveValues(List<Map<Integer, Boolean>> days) {
+
+        int result = 0;
+
+        for (Map<Integer, Boolean> day: days){
+            if (day.size() > 0) result++;
+        }
+
+        return result;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private List<Map<Integer, Boolean>> chooseThreeHighestDays(List<Map<Integer, Boolean>> days) {
+
+        Comparator<Map<Integer, Boolean>> mapComparator = new Comparator<Map<Integer, Boolean>>() {
+            @Override
+            public int compare(Map<Integer, Boolean> t1, Map<Integer, Boolean> t2) {
+
+                return t2.size() - t1.size();
+            }
+        };
+
+        days.sort(mapComparator);
+
+        return Arrays.asList(days.get(0), days.get(1), days.get(2));
     }
 
     private Map<Integer, Boolean> getDefaultResult(Map<Integer, Boolean> result) {
@@ -88,7 +98,7 @@ public class TimeStampLogic {
             else{
                 result.put(minDay2,true);
             }
-         //if day 3 is greater than day 2
+            //if day 3 is greater than day 2
         } else {
             Integer maxDay3 = Collections.max(dayB.keySet());
             Integer minDay3 = Collections.min(dayB.keySet());
