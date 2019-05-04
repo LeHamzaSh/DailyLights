@@ -207,7 +207,6 @@ public class ControlsActivity extends AppCompatActivity {
                         }
                     }
 
-
                     if (counter >= 180) {
                         // day1, day2, day3
                         //int highestTime = FindHighestTimeFrom3Days(Day1, Day2, Day3);
@@ -231,7 +230,6 @@ public class ControlsActivity extends AppCompatActivity {
         }
     }
 
-
         private void UltraSoundMode () {
             ExecutorService exec = Executors.newFixedThreadPool(1);
 
@@ -245,7 +243,6 @@ public class ControlsActivity extends AppCompatActivity {
         }
 
         private void AutoMode () throws InterruptedException {
-
 
             ExecutorService exec = Executors.newSingleThreadExecutor();
 
@@ -313,7 +310,7 @@ public class ControlsActivity extends AppCompatActivity {
                 super.onPostExecute(result);
 
                 if (!ConnectSuccessfull) {
-                    msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
+                    msg("Connection Failed.Try again.");
                     finish();
                 } else {
                     //connection done
@@ -344,8 +341,7 @@ public class ControlsActivity extends AppCompatActivity {
 
         private InputStream readUSValue ()
         {
-            //send a message to the Arduino
-            //when it's time, use this to send the turn on/off message
+            //Receive data from the arduino
             if (BluetoothSoc != null) {
                 try {
                     return BluetoothSoc.getInputStream();
@@ -362,16 +358,4 @@ public class ControlsActivity extends AppCompatActivity {
             super.onDestroy();
             sendMsg("0");
         }
-
-    private int[] convertMapIntegerKeyToArray(Map<Integer, Boolean> day1) {
-        int[] result = new int[day1.size()];
-
-        Iterator<Integer> keySetIterator = day1.keySet().iterator();
-        int i = 0;
-        while (keySetIterator.hasNext()) {
-            result[i] = keySetIterator.next();
-            ++i;
-        }
-        return result;
-    }
 }

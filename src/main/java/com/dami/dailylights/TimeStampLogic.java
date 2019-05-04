@@ -2,6 +2,7 @@ package com.dami.dailylights;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +28,9 @@ public class TimeStampLogic {
         /*CONDITIONS FOR DAY 1*/
         if((day1.size() > day2.size()) && (day1.size() > day3.size())){
             Integer maxDay1 = Collections.max(day1.keySet());
+            Log.d("HAMZA_APP","Max Value: "+maxDay1);
             Integer minDay1 = Collections.min(day1.keySet());
+            Log.d("HAMZA_APP","Min Value: "+minDay1);
 
             updateResultComparingMinAndMax(day2, day3, Result, maxDay1, minDay1);
         }
@@ -36,7 +39,9 @@ public class TimeStampLogic {
         //if day 2 is greater than day 1 and day 3
         else if((day2.size() > day1.size()) && (day2.size() > day3.size())){
             Integer maxDay2 = Collections.max(day2.keySet());
+            Log.d("HAMZA_APP","Max Value: "+maxDay2);
             Integer minDay2 = Collections.min(day2.keySet());
+            Log.d("HAMZA_APP","Min Value: "+minDay2);
 
             updateResultComparingMinAndMax(day1, day3, Result, maxDay2, minDay2);
 
@@ -44,7 +49,9 @@ public class TimeStampLogic {
         /*CONDITIONS FOR DAY 3 */
         else {
             Integer maxDay3 = Collections.max(day3.keySet());
+            Log.d("HAMZA_APP","Max Value: "+maxDay3);
             Integer minDay3 = Collections.min(day3.keySet());
+            Log.d("HAMZA_APP","Min Value: "+minDay3);
 
             updateResultComparingMinAndMax(day1, day2, Result, maxDay3, minDay3);
 

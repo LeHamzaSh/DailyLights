@@ -3,6 +3,7 @@ package com.dami.dailylights;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,11 +34,13 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(Login.this, MainActivity.class);
         Login.this.startActivity(intent);
 //        if((UserName.equals("a")) && (PassWord.equals("a"))){
+//            Log.d("HAMZA_APP","Login Details Matched, Logging in Now");
 //            Intent intent = new Intent(Login.this, MainActivity.class);
 //            Login.this.startActivity(intent);
 //        }
 //        else{
 //            Toast.makeText(getBaseContext(), "Enter Password Again!", Toast.LENGTH_SHORT).show();
+//            Log.d("HAMZA_APP","Verification Failed");
 //        }
     }
 

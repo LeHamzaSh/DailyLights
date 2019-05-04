@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(MainActivity.this, ControlsActivity.class);
             i.putExtra(EXTRA_ADDRESS, address);
             startActivity(i);
-
         }
     };
 
