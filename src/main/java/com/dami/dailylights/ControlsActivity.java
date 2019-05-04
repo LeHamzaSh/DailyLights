@@ -11,9 +11,14 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -43,6 +48,13 @@ public class ControlsActivity extends AppCompatActivity {
     //bluetooth address
     String address = null;
 
+    //Radio Group Declarations
+    RadioGroup group;
+    RadioButton radio, radio2, radio3;
+
+    //Apply Button Declarations
+    Button apply;
+
     //dialog when connecting
     private ProgressDialog progress;
 
@@ -50,6 +62,9 @@ public class ControlsActivity extends AppCompatActivity {
     BluetoothAdapter BluetoothAdap = null;
     BluetoothSocket BluetoothSoc = null;
     private boolean BooleanBT = false;
+
+    // Configure number of days for algorithm to train
+    int numDays;
 
     //UUID stuff
     static final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -78,6 +93,16 @@ public class ControlsActivity extends AppCompatActivity {
 
         //get address from previous choice
         address = newint.getStringExtra(MainActivity.EXTRA_ADDRESS);
+
+        //Radio group
+        group = (RadioGroup) findViewById(R.id.radioGroup);
+
+        //Radio Button
+        radio = (RadioButton) findViewById(R.id.radioButton);
+        radio2 = (RadioButton) findViewById(R.id.radioButton2);
+        radio3 = (RadioButton) findViewById(R.id.radioButton3);
+
+
 
         //start connection
         new ConnectBT().execute();
@@ -170,11 +195,24 @@ public class ControlsActivity extends AppCompatActivity {
 
                 DaysCreator creator = new DaysCreator();
 
-                // Configure number of days for algorithm to train
-                int numDays = 7;
-
                 // Configure number of events to sample per day
                 int distributeSize = 30;
+
+                group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        if(checkedId == R.id.radioButton){
+                            numDays = 3;
+                        }
+
+                        else if(checkedId == R.id.radioButton2){
+                            numDays = 5;
+                        }
+                        else if(checkedId == R.id.radioButton3){
+                            numDays = 7;
+                        }
+                    }
+                });
 
                 List<Map<Integer, Boolean>> generatedDays = creator.createDays(numDays);
 
