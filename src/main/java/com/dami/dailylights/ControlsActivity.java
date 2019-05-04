@@ -57,11 +57,6 @@ public class ControlsActivity extends AppCompatActivity {
     //Map Creation
     Map<Integer, Boolean> timeMap = new HashMap<>();
 
-    Map<LocalDateTime, Boolean> StoredTimeValues = new HashMap<>();
-
-    Map<Integer, Boolean> Day1 = new HashMap<>();
-    Map<Integer, Boolean> Day2 = new HashMap<>();
-    Map<Integer, Boolean> Day3 = new HashMap<>();
 
     // Automode function boolean
     AtomicBoolean isAutoModeEnabled = new AtomicBoolean(false);
@@ -173,14 +168,19 @@ public class ControlsActivity extends AppCompatActivity {
                 int counter = 0;// set counter to 0
                 int readValue = 0; //set readValue to 0
 
-                Day1.clear(); // clear day 1 hash map
-                Day2.clear(); // clear day 2 hash map
-                Day3.clear(); // clear day 3 hash map
-
                 DaysCreator creator = new DaysCreator();
 
-                List<Map<Integer, Boolean>> generatedDays = creator.createDays(7);
+                // Configure number of days for algorithm to train
+                int numDays = 7;
+
+                // Configure number of events to sample per day
+                int distributeSize = 30;
+
+                List<Map<Integer, Boolean>> generatedDays = creator.createDays(numDays);
+
                 List<Integer> events = new ArrayList<>();
+
+                int eventsSample = numDays * distributeSize;
 
                 while (readValue != -1 && isUltraSoundSensorModeEnabled.get()) {
                     //Log.d("HAMZA_APP", "Read US Value: " + readValue);
@@ -189,47 +189,16 @@ public class ControlsActivity extends AppCompatActivity {
                     events.add(readValue);
                     Log.d("HAMZA_APP", "Counter Value: " + counter + " , Local Time In Seconds: " + LocalDateTime.now().getSecond() +" Sensor Value: "+readValue);
 
-//                    // Day 1 Conditions
-//                    if (counter < 60) {
-//                        Log.d("HAMZA_APP", "Counter Value Day 1: " + counter);
-//                        if (readValue <= 20) {
-//                            Day1.put(LocalDateTime.now().getSecond(), true);
-//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day1);
-//                        }
-//                    }
-//
-//                    // Day 2 Conditions
-//                    if (counter >= 60 && counter < 120) {
-//                        Log.d("HAMZA_APP", "Counter Value Day 2: " + counter);
-//                        if (readValue <= 20) {
-//                            Day2.put(LocalDateTime.now().getSecond(), true);
-//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day2);
-//                        }
-//                    }
-//
-//                    // Day 3 Conditions
-//                    if (counter >= 120 && counter < 180) {
-//                        Log.d("HAMZA_APP", "Counter Value Day 3: " + counter);
-//                        if (readValue <= 20) {
-//                            Day3.put(LocalDateTime.now().getSecond(), true);
-//                            Log.d("HAMZA_APP", "Boolean True Time: " + Day3);
-//                        }
-//                    }
 
-                    int eventsSample = 210;
                     if (counter >= eventsSample) {
-                        // day1, day2, day3
-                        //int highestTime = FindHighestTimeFrom3Days(Day1, Day2, Day3);
-                        creator.distributeEvents(generatedDays,30, events );
+
+                        creator.distributeEvents(generatedDays,distributeSize, events );
+
                         TimeStampLogic timeStampLogic = new TimeStampLogic();
-                        //Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(Arrays.asList(Day1, Day2, Day3));
+
                         Map<Integer, Boolean> NewProcessedTime = timeStampLogic.dataProcess(generatedDays);
                         counter = 0; //reset counter back to zero
 
-
-                        Day1.clear();// Clear Day 1 hash map
-                        Day2.clear();// Clear Day 2 hash map
-                        Day3.clear();// Clear Day 3 hash map
                         creator.clearDays(generatedDays);
                         timeMap.clear();
                         timeMap.putAll(NewProcessedTime);
