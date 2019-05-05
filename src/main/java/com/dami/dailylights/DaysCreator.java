@@ -1,9 +1,11 @@
 package com.dami.dailylights;
 
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,7 @@ class DaysCreator {
         return result;
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Map<Integer, Boolean>> distributeEvents(List<Map<Integer, Boolean>> daysList, int distributeSize, List<Integer> events) {
 
